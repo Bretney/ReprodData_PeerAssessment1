@@ -1,6 +1,6 @@
-Reproducible Research: Peer Assessment 1
+# Reproducible Research: Peer Assessment 1
 
-Loading and preprocessing the data
+## Loading and preprocessing the data
 
 1. Load the data (i.e. read.csv())
 
@@ -11,7 +11,7 @@ setwd("~/repdata-data-activity")
 data <- read.csv("activity.csv")
 
 
-2. Process/transform the data (if necessary) into a format suitable for your analysis
+## 2. Process/transform the data (if necessary) into a format suitable for your analysis
 library(knitr) 
 library(gridExtra) 
 library(ggplot2) 
@@ -20,14 +20,14 @@ library(dplyr)
 opts_chunk$set(echo = TRUE)
 
 
-3. What is mean total number of steps taken per day?
+## 3. What is mean total number of steps taken per day?
 
 totalPerDay <- tapply(steps,list(date),sum)
 detach(data)
 
 hist(totalPerDay,breaks=10)
 
-4. Calculate and report the mean and median total number of steps taken per day
+## 4. Calculate and report the mean and median total number of steps taken per day
 
 meanPerDay = mean(totalPerDay,na.rm = TRUE)
 meanPerDay
@@ -36,14 +36,14 @@ medianPerDay <- median(totalPerDay,na.rm = TRUE)
 medianPerDay
 
 
-5. What is the average daily activity pattern?
+## 5. What is the average daily activity pattern?
 
 plot(meanEvery5min,type="l")
 which.max(meanEvery5min)
 835 
 104 
 
-6. Calculate and report the total number of missing values in the dataset
+## 6. Calculate and report the total number of missing values in the dataset
 
 calMissing <- sum(is.na(data$steps))
 calMissing
@@ -76,7 +76,7 @@ str(data)
 5    NA 2012-10-01       20    0.0754717   weekend
 6    NA 2012-10-01       25    2.0943396   weekend
 
-7.  Are there differences in activity patterns between weekdays and weekends?
+## 7.  Are there differences in activity patterns between weekdays and weekends?
 
 daytypeDiff <- aggregate(imputedSteps, list(interval,isweekday), mean)
 detach(data)
