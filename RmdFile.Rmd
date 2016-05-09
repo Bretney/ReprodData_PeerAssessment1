@@ -1,0 +1,106 @@
+---
+title: "RFile"
+author: "Bretney"
+date: "8 May 2016"
+output: 
+  html_document: 
+    fig_caption: yes
+    keep_md: yes
+---
+# SUMMARY
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. 
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+##1.  Setting the environment
+```{r, warning=FALSE}
+setwd('C:/Users/Bretney/Documents/GitHub/ReprodData_PeerAssessment1/activity')
+data <- read.csv("activity.csv")
+str(data)
+
+attach(data)
+totalPerDay <- tapply(steps,list(date),sum)
+detach(data)
+library(knitr) 
+library(gridExtra) 
+library(ggplot2) 
+library(plyr) 
+library(dplyr)
+opts_chunk$set(echo = TRUE)
+```
+
+##2. Finding TotalPerDay and the Median/Mean Per Day
+```{r,message=FALSE, warning=FALSE}
+hist(totalPerDay,breaks=10)
+meanPerDay = mean(totalPerDay,na.rm = TRUE)
+meanPerDay
+medianPerDay <- median(totalPerDay,na.rm = TRUE)
+medianPerDay
+  attach(data)
+meanEvery5min <- tapply(steps,list(interval),mean,na.rm=TRUE)
+detach(data)
+plot(meanEvery5min,type="l")
+which.max(meanEvery5min)
+
+###What is the mean and max value across all the days of the data
+meanEvery5min[104]
+
+
+max(meanEvery5min)
+```
+
+##3. Imputting the Missing VAlues
+```{r}
+
+calMissing <- sum(is.na(data$steps))
+calMissing
+
+```
+
+##4. Replacng the Missing Values
+```{r}
+na <- is.na(data$steps)
+shiftmeanEvery5min <- c(meanEvery5min[288],meanEvery5min[1:287])
+imputedSteps <- rep(0,length(data$steps))
+ for (i in 1:length(data$steps))
+ if(na[i])
+     imputedSteps[i] <- shiftmeanEvery5min[i%%length(meanEvery5min)+1]
+ 
+   imputedSteps[i] <- data$steps[i]
+ 
+ data <- cbind(data,imputedSteps)
+ str(data)
+
+```
+
+```{r}
+ head(data)
+
+```
+
+##5. Setting the Average Number of steps taken per day
+```{r, message=FALSE, warning=FALSE}
+averages <- aggregate(x=list(steps=data$steps), by=list(interval=data$interval),
+                      FUN=mean, na.rm=TRUE)
+ggplot(data=averages, aes(x=interval, y=steps)) +
+  geom_line() +
+ xlab("5-minute interval") +
+   ylab("average number of steps taken")
+
+```
+
+##6. Total Number of Steps Taken
+```{r}
+total.steps <- tapply(imputedSteps, imputedSteps, FUN=sum)
+qplot(total.steps, binwidth=100, xlab="The Total Number Steps Each Day")
+mean(total.steps)
+median(total.steps)
+```
+
+
+##7. Comparism of Number of Steps taken: a Weekday vs Weekend
+```{r}
+```
